@@ -1,4 +1,11 @@
-export default function About() {
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "About | jobs",
+};
+
+export default function AboutPage() {
+
     return (
         <div>
             <h1>About</h1>
