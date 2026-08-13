@@ -16,6 +16,6 @@ export async function GET(): Promise<NextResponse> {
 export async function DELETE(request: Request, {params}: { params: Promise<{ jobId: string }> }): Promise<NextResponse> {
     const {jobId} = await params;
     db.prepare('DELETE FROM saved_jobs WHERE job_id = ?')
-    .run(jobId);
+    .run(Number(jobId));
     return NextResponse.json({message: 'Job Deleted successfully'}, {status: 200});
 }
