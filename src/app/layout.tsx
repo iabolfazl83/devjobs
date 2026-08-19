@@ -39,6 +39,9 @@ export default function RootLayout({
                     <li className="hover:opacity-50 duration-200">
                         <Link href="/about">About</Link>
                     </li>
+                    <li className="hover:opacity-50 duration-200">
+                        <Link href="/saved">Saved Jobs</Link>
+                    </li>
                 </ul>
             </nav>
         </header>

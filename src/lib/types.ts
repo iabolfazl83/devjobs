@@ -15,3 +15,9 @@ export interface JobsResponse {
     page_count: number;
     results: Job[];
 }
+
+export interface SavedJobRow {
+    id: number;
+    job_id: number;
+    saved_at: string;
+}

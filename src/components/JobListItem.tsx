@@ -1,14 +1,8 @@
 "use client";
 
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
-import {Job} from "@/lib/types";
+import {Job, SavedJobRow} from "@/lib/types";
 import Link from "next/link";
-
-interface SavedJobRow {
-    id: number;
-    job_id: number;
-    saved_at: string;
-}
 
 export default function JobListItem({job}: { job: Job }) {
     const queryClient = useQueryClient();
