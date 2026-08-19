@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SavedJobsPage() {
-    const res = await fetch("http://localhost:3000/api/saved-jobs");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/saved-jobs`);
     const {savedJobs} = await res.json();
     const jobs = await Promise.all(
         savedJobs.map((saved:SavedJobRow) => getJobById(saved.job_id))

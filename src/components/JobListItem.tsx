@@ -11,7 +11,7 @@ export default function JobListItem({job}: { job: Job }) {
     const {data: savedJobs = []} = useQuery<SavedJobRow[]>({
         queryKey: ["saved-jobs"],
         queryFn: async () => {
-            const res = await fetch("/api/saved-jobs");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/saved-jobs`);
             const json = await res.json();
             return json.savedJobs;
         },
@@ -25,7 +25,7 @@ export default function JobListItem({job}: { job: Job }) {
             if (isSaved) {
                 await fetch(`/api/saved-jobs/${job.id}`, {method: "DELETE"});
             } else {
-                await fetch("/api/saved-jobs", {
+                await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/saved-jobs`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({jobId: job.id}),
