@@ -13,7 +13,6 @@ export default async function SavedJobsPage() {
     const jobs = await Promise.all(
         savedJobs.map((saved:SavedJobRow) => getJobById(saved.job_id))
     );
-    console.log(jobs);
 
     return (
         <div>
