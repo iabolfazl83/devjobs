@@ -1,6 +1,6 @@
 import {JobsResponse} from "@/lib/types";
 import {Metadata} from "next";
-import JobListItem from "@/components/JobListItem";
+import JobsList from "@/components/JobsList";
 
 export const metadata: Metadata = {
     title: "Jobs | jobs",
@@ -11,14 +11,6 @@ export default async function JobsPage() {
     const jobs: JobsResponse = await response.json();
     const {results} = jobs;
     return (
-        <div>
-            <ul className="flex flex-col gap-2 p-4">
-                {
-                    results.map((job) => (
-                        <JobListItem job={job} key={job.id}/>
-                    ))
-                }
-            </ul>
-        </div>
+        <JobsList jobs={results}/>
     );
 }
