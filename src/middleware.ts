@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 
 export function middleware(request: NextRequest) {
     const isLoggedIn = request.cookies.has('session');
-    const { pathname } = request.nextUrl;
+    const {pathname} = request.nextUrl;
 
     if (!isLoggedIn && pathname === '/saved') {
         const loginUrl = new URL('/login', request.url);
