@@ -30,17 +30,28 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         >
         <body className="min-h-full flex flex-col">
-        <header>
+        <header className="border-b border-border">
             <nav>
-                <ul className="flex justify-center gap-6 px-4 py-2">
-                    <li className="hover:opacity-50 duration-200">
-                        <Link href="/">Home</Link>
+                <ul className="flex justify-center gap-6 px-4 py-3">
+                    <li>
+                        <Link href="/" className="text-text-muted hover:text-accent transition-colors">
+                            Home
+                        </Link>
                     </li>
-                    <li className="hover:opacity-50 duration-200">
-                        <Link href="/about">About</Link>
+                    <li>
+                        <Link href="/about" className="text-text-muted hover:text-accent transition-colors">
+                            About
+                        </Link>
                     </li>
-                    <li className="hover:opacity-50 duration-200">
-                        <Link href="/saved">Saved Jobs</Link>
+                    <li>
+                        <Link href="/jobs" className="text-text-muted hover:text-accent transition-colors">
+                            Jobs
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/saved" className="text-text-muted hover:text-accent transition-colors">
+                            Saved Jobs
+                        </Link>
                     </li>
                 </ul>
             </nav>

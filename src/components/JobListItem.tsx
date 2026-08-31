@@ -39,12 +39,20 @@ export default function JobListItem({job}: { job: Job }) {
     });
 
     return (
-        <li className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 duration-200">
-            <Link href={`/jobs/${job.id}`} className="hover:underline">
-                {job.name} | {job.company.name}
+        <li className="flex items-center justify-between gap-4 p-4 bg-surface border border-border rounded-lg hover:border-accent transition-colors">
+            <Link href={`/jobs/${job.id}`} className="flex-1 hover:text-accent transition-colors">
+                <span className="font-medium">{job.name}</span>
+                <span className="text-text-muted"> · {job.company.name}</span>
             </Link>
-            <button onClick={() => mutation.mutate()} className="ml-2 underline cursor-pointer">
-                {isSaved ? "Unsave" : "Save"}
+            <button
+                onClick={() => mutation.mutate()}
+                className={`
+                    px-3 py-1 text-sm rounded-full
+                    ${isSaved
+                    ? "bg-accent text-background font-medium"
+                    : "border border-border text-text-muted hover:border-accent hover:text-accent transition-colors"
+                }`}>
+                {isSaved ? "Saved" : "Save"}
             </button>
         </li>
     );
