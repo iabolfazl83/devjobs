@@ -2,14 +2,14 @@ import {Metadata} from "next";
 import {getJobById} from "@/lib/jobs";
 import JobListItem from "@/components/JobListItem";
 import {SavedJobRow} from "@/lib/types";
+import {getSavedJobs} from "@/lib/saved-jobs";
 
 export const metadata: Metadata = {
     title: "Saved Jobs | jobs",
 };
 
 export default async function SavedJobsPage() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/saved-jobs`);
-    const {savedJobs} = await res.json();
+    const savedJobs = getSavedJobs();
     const jobs = await Promise.all(
         savedJobs.map((saved:SavedJobRow) => getJobById(saved.job_id))
     );
