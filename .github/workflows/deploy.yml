@@ -1,0 +1,107 @@
+name: CI & Deploy
+
+# One pipeline for everything:
+#   - every PR: lint, typecheck, unit tests, build, end-to-end tests
+#   - master + every 6 hours: the same, then deploy to GitHub Pages with a freshly fetched job catalog
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    - cron: "17 */6 * * *" # refresh the job catalog four times a day
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, types & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  build:
+    name: Build & end-to-end tests
+    needs: quality
+    runs-on: ubuntu-latest
+    env:
+      # GitHub Pages serves project sites from /<repo-name>/
+      NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+      NEXT_PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+      # Optional: raises The Muse's rate limit from 500 to 3,600 requests/hour.
+      MUSE_API_KEY: ${{ secrets.MUSE_API_KEY }}
+      # Deploys always fetch fresh data; PRs reuse the last snapshot to spare the upstream API.
+      CATALOG_MAX_AGE_HOURS: ${{ github.event_name == 'pull_request' && '48' || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      # The last good raw snapshot. If the upstream API is down or rate-limits us,
+      # the pipeline falls back to it instead of failing — the site never goes stale-and-broken.
+      - name: Restore last catalog snapshot
+        uses: actions/cache/restore@v4
+        with:
+          path: .data/raw.json
+          key: catalog-${{ github.run_id }}
+          restore-keys: catalog-
+
+      - name: Build (fetches the catalog, then exports static HTML)
+        run: npm run build
+
+      - name: Save catalog snapshot
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: .data/raw.json
+          key: catalog-${{ github.run_id }}
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end & accessibility tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Upload site
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

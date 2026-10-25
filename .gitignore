@@ -44,3 +44,10 @@ next-env.d.ts
 
 #sql
 devjobs.db
+# generated job catalog (built by `npm run catalog`)
+/.data/
+/public/data/
+
+# playwright
+/test-results/
+/playwright-report/
